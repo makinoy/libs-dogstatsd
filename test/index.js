@@ -31,10 +31,13 @@ module.exports = {
   },
 
   test4: (test) => {
-    this.dogstatsd.start();
+    const stat = this.dogstatsd.start();
     setTimeout(() => {
-      this.dogstatsd.end('test');
-      test.done();
+      stat.tick('test');
+      setTimeout(() => {
+        stat.tick('test2');
+        test.done();
+      }, 100);
     }, 100);
   },
 }
