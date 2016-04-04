@@ -28,6 +28,15 @@ module.exports = (config) => {
     };
   }
 
+  var startTime = null;
+  client.start = () => {
+    startTime = Date.now();
+  }
+  client.end = (stat) => {
+    client.increment(stat + '.count');
+    client.timing(stat + '.time', Date.now() - startTime);
+  }
+
   return client;
 };
 

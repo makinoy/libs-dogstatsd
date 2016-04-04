@@ -29,4 +29,12 @@ module.exports = {
     this.dogstatsd.gauge('test', 100);
     test.done();
   },
+
+  test4: (test) => {
+    this.dogstatsd.start();
+    setTimeout(() => {
+      this.dogstatsd.end('test');
+      test.done();
+    }, 100);
+  },
 }
