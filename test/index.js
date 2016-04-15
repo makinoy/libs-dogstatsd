@@ -15,8 +15,8 @@ module.exports = {
 
   test1: (test) => {
     this.dogstatsd.increment('test');
-    this.dogstatsd.increment('test');
     this.dogstatsd.increment('test', 1, ['tag']);
+    this.dogstatsd.incrementBy('test', 5, ['tag']);
     test.done();
   },
 
@@ -36,8 +36,11 @@ module.exports = {
       stat.tick('test');
       setTimeout(() => {
         stat.tick('test2');
-        test.done();
+        setTimeout(() => {
+         stat.tick('test3', 5);
+          test.done();
+        }, 100);
       }, 100);
     }, 100);
-  },
+  }
 }

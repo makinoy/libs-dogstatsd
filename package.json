@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://makinoy@github.com/makinoy/libs-dogstatsd.git"
+    "url": "git+https://makinoy@github.com/makinoy/libs-dogstatsd.git#b2daab98c084a23f7db757b5694efd5a074f51e6"
   },
   "keywords": [
     "dogstatsd"
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/makinoy/libs-dogstatsd#readme",
   "dependencies": {
-    "node-dogstatsd": "0.0.6"
+    "node-dogstatsd": "git@github.com:joybro/node-dogstatsd.git"
   },
   "devDependencies": {
     "nodeunit": "^0.9.1"
