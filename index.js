@@ -27,12 +27,18 @@ module.exports = (config) => {
       logger.log(buf.toString());
     };
   }
-
   client.start = () => {
     var startTime = Date.now();
     return {
-      tick: (stat) => {
-        client.increment(stat + '.count');
+      tick: (stat, num) => {
+        // first arg only
+        if (typeof num === "undefined") {
+          client.increment(stat + '.count');
+        } else if (isNaN(num)) {
+          logger.error('tick second arg must be number.');
+          return;
+        }
+        client.incrementBy(stat + '.count', num);
         client.timing(stat + '.time', Date.now() - startTime);
       }
     }
