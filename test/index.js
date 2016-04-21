@@ -17,6 +17,7 @@ module.exports = {
     this.dogstatsd.increment('test');
     this.dogstatsd.increment('test');
     this.dogstatsd.increment('test', 1, ['tag']);
+    this.dogstatsd.increment('test', 10, 1, ['tag']);
     test.done();
   },
 
@@ -35,9 +36,30 @@ module.exports = {
     setTimeout(() => {
       stat.tick('test');
       setTimeout(() => {
-        stat.tick('test2');
+        stat.tick('test2', 100);
         test.done();
       }, 100);
     }, 100);
   },
+
+  test5: (test) => {
+    wrapped = this.dogstatsd.wrap((a, b, c) => {
+      // heavy process
+      test.equals(a, 'a');
+      test.equals(b, 'b');
+      test.equals(c, 'c');
+    }, 'test3');
+    wrapped('a', 'b', 'c');
+
+    wrapped2 = this.dogstatsd.wrap((a, cb) => {
+      test.equals(a, 'a');
+      setTimeout(() => {
+        cb();
+      }, 1000);
+    }, 'test4')
+
+    wrapped2('a', () => {
+      test.done();
+    });
+  }
 }

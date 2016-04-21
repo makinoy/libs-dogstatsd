@@ -28,12 +28,40 @@ module.exports = (config) => {
     };
   }
 
+  // override to consume 'value'
+  client.increment = (stat, value, sampleRate, tags) => {
+    client.update_stats(stat, value || 1, sampleRate, tags);
+  }
+
   client.start = () => {
     var startTime = Date.now();
     return {
-      tick: (stat) => {
-        client.increment(stat + '.count');
+      tick: (stat, num) => {
+        const count = num || 1;
+        if (isNaN(count)) {
+          logger.error('tick second arg must be number.');
+          return;
+        }
+        client.increment(stat + '.count', count);
         client.timing(stat + '.time', Date.now() - startTime);
+      }
+    }
+  }
+
+  client.wrap = function(fn, stat) {
+    return function() {
+      const cb = arguments[arguments.length - 1];
+      const stats = client.start();
+      if ('function' === typeof cb) {
+        arguments[arguments.length - 1] = function() {
+          stats.tick(stat);
+          return cb.apply(this, arguments);
+        }
+        return fn.apply(this, arguments);
+      } else {
+        const ret = fn.apply(this, arguments);
+        stats.tick(stat);
+        return ret;
       }
     }
   }
