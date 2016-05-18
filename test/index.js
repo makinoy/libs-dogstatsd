@@ -37,7 +37,13 @@ module.exports = {
       stat.tick('test');
       setTimeout(() => {
         stat.tick('test2', 100);
-        test.done();
+        setTimeout(() => {
+          stat.tick('test3', 100, 1);
+          setTimeout(() => {
+            stat.tick('test4', 100, 1, ['tag4']);
+            test.done();
+          }, 100);
+        }, 100);
       }, 100);
     }, 100);
   },
@@ -56,10 +62,10 @@ module.exports = {
       setTimeout(() => {
         cb();
       }, 1000);
-    }, 'test4')
+    }, 'test4');
 
     wrapped2('a', () => {
       test.done();
     });
   }
-}
+};

@@ -31,22 +31,33 @@ module.exports = (config) => {
   // override to consume 'value'
   client.increment = (stat, value, sampleRate, tags) => {
     client.update_stats(stat, value || 1, sampleRate, tags);
-  }
+  };
 
   client.start = () => {
     var startTime = Date.now();
     return {
-      tick: (stat, num) => {
+      tick: (stat, num, _sampleRate, _tags) => {
         const count = num || 1;
+        const sampleRate = _sampleRate || 1;
+        const tags = _tags || null;
         if (isNaN(count)) {
           logger.error('tick second arg must be number.');
           return;
         }
-        client.increment(stat + '.count', count);
-        client.timing(stat + '.time', Date.now() - startTime);
+        if (isNaN(sampleRate)) {
+          logger.error('tick third arg must be number.');
+          return;
+        }
+        if (!(Array.isArray(tags) || tags == null)) {
+          logger.error('tick fourth arg must be array or null.');
+          return;
+        }
+
+        client.increment(stat + '.count', count, sampleRate, tags);
+        client.timing(stat + '.time', Date.now() - startTime, sampleRate, tags);
       }
     }
-  }
+  };
 
   client.wrap = function(fn, stat) {
     return function() {
@@ -56,7 +67,7 @@ module.exports = (config) => {
         arguments[arguments.length - 1] = function() {
           stats.tick(stat);
           return cb.apply(this, arguments);
-        }
+        };
         return fn.apply(this, arguments);
       } else {
         const ret = fn.apply(this, arguments);
@@ -64,7 +75,7 @@ module.exports = (config) => {
         return ret;
       }
     }
-  }
+  };
 
   return client;
 };
@@ -81,4 +92,4 @@ createSocket = (logger) => {
     });
   }
   return socket;
-}
+};
