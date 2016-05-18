@@ -39,7 +39,7 @@ module.exports = (config) => {
       tick: (stat, num, _sampleRate, _tags) => {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
-        const tags = _tags || [];
+        const tags = _tags || null;
         if (isNaN(count)) {
           logger.error('tick second arg must be number.');
           return;
@@ -48,8 +48,8 @@ module.exports = (config) => {
           logger.error('tick third arg must be number.');
           return;
         }
-        if (!Array.isArray(tags)) {
-          logger.error('tick fourth arg must be array.');
+        if (!(Array.isArray(tags) || tags == null)) {
+          logger.error('tick fourth arg must be array or null.');
           return;
         }
 
@@ -67,7 +67,7 @@ module.exports = (config) => {
         arguments[arguments.length - 1] = function() {
           stats.tick(stat);
           return cb.apply(this, arguments);
-        }
+        };
         return fn.apply(this, arguments);
       } else {
         const ret = fn.apply(this, arguments);
@@ -75,7 +75,7 @@ module.exports = (config) => {
         return ret;
       }
     }
-  }
+  };
 
   return client;
 };
