@@ -1,4 +1,5 @@
 const dgram = require('dgram');
+const dns = require('dns');
 
 const StatsD = require('node-dogstatsd').StatsD;
 
@@ -15,12 +16,21 @@ module.exports = (config) => {
   const logger = config.logger || console;
   const host = config.HOST || 'localhost';
   const port = config.PORT || 8125;
+  const cacheDns = config.cacheDns || true;
 
   var socket = null;
   if (!mock) {
     socket = createSocket(logger);
   }
   const client = new StatsD(host, port, socket);
+
+  if (cacheDns === true){
+    dns.lookup(host, (err, address) => {
+      if (err == null){
+        client.host = address;
+      }
+    });
+  }
 
   if (mock) {
     client.send_data = (buf) => {
