@@ -1,37 +1,39 @@
+require('blanket')();
 var dogstatsd = require('../');
+var assert = require('assert');
 
-module.exports = {
+describe('tests', () => {
 
-  setUp: (done) => {
+  before('init', (done) => {
     this.dogstatsd = dogstatsd({
       mock: true
     });
     done();
-  },
+  });
 
-  tearDown: (done) => {
-    done();
-  },
+  // after('', (done) => {
+  //   done();
+  // });
 
-  test1: (test) => {
+  it('test1', (done) => {
     this.dogstatsd.increment('test');
     this.dogstatsd.increment('test');
     this.dogstatsd.increment('test', 1, ['tag']);
     this.dogstatsd.increment('test', 10, 1, ['tag']);
-    test.done();
-  },
+    done();
+  });
 
-  test2: (test) => {
+  it('test2', (done) => {
     this.dogstatsd.timing('test', 100);
-    test.done();
-  },
+    done();
+  });
 
-  test3: (test) => {
+  it('test3', (done) => {
     this.dogstatsd.gauge('test', 100);
-    test.done();
-  },
+    done();
+  });
 
-  test4: (test) => {
+  it('test4', (done) => {
     const stat = this.dogstatsd.start();
     setTimeout(() => {
       stat.tick('test');
@@ -41,31 +43,31 @@ module.exports = {
           stat.tick('test3', 100, 1);
           setTimeout(() => {
             stat.tick('test4', 100, 1, ['tag4']);
-            test.done();
+            done();
           }, 100);
         }, 100);
       }, 100);
     }, 100);
-  },
+  });
 
-  test5: (test) => {
+  it('test5', (done) => {
     wrapped = this.dogstatsd.wrap((a, b, c) => {
       // heavy process
-      test.equals(a, 'a');
-      test.equals(b, 'b');
-      test.equals(c, 'c');
+      assert.equal(a, 'a');
+      assert.equal(b, 'b');
+      assert.equal(c, 'c');
     }, 'test3');
     wrapped('a', 'b', 'c');
 
     wrapped2 = this.dogstatsd.wrap((a, cb) => {
-      test.equals(a, 'a');
+      assert.equal(a, 'a');
       setTimeout(() => {
         cb();
       }, 1000);
     }, 'test4');
 
     wrapped2('a', () => {
-      test.done();
+      done();
     });
-  }
-};
+  });
+});
