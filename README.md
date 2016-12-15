@@ -1,5 +1,7 @@
 # libs-dogstatsd
 
+[![Coverage Status](https://coveralls.io/repos/github/makinoy/libs-dogstatsd/badge.svg)](https://coveralls.io/github/makinoy/libs-dogstatsd)  
+
 A wrapper library of `node-dogstatsd`
 
 ```
