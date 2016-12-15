@@ -1,4 +1,3 @@
-require('blanket')();
 var dogstatsd = require('../');
 var assert = require('assert');
 
