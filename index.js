@@ -46,7 +46,12 @@ module.exports = (config) => {
   client.start = () => {
     var startTime = Date.now();
     return {
-      tick: (stat, num, _sampleRate, _tags) => {
+
+      get_elapsed: () => {
+        return Date.now() - startTime
+      },
+
+      tick: function(stat, num, _sampleRate, _tags) {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
@@ -64,8 +69,8 @@ module.exports = (config) => {
         }
 
         client.increment(stat + '.count', count, sampleRate, tags);
-        client.timing(stat + '.time', Date.now() - startTime, sampleRate, tags);
-      }
+        client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
+      },
     }
   };
 
