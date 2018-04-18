@@ -50,7 +50,7 @@ describe('tests', () => {
   });
 
   it('test5', (done) => {
-    wrapped = this.dogstatsd.wrap((a, b, c) => {
+    const wrapped = this.dogstatsd.wrap((a, b, c) => {
       // heavy process
       assert.equal(a, 'a');
       assert.equal(b, 'b');
@@ -58,7 +58,7 @@ describe('tests', () => {
     }, 'test3');
     wrapped('a', 'b', 'c');
 
-    wrapped2 = this.dogstatsd.wrap((a, cb) => {
+    const wrapped2 = this.dogstatsd.wrap((a, cb) => {
       assert.equal(a, 'a');
       setTimeout(() => {
         cb();
@@ -68,5 +68,16 @@ describe('tests', () => {
     wrapped2('a', () => {
       done();
     });
+  });
+
+  it('test6', (done) => {
+    const stat = this.dogstatsd.start();
+    setTimeout(() => {
+      let elapsed = stat.get_elapsed();
+      assert.ok(elapsed >= 500);
+      done();
+
+    }, 500);
+
   });
 });
