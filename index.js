@@ -95,7 +95,7 @@ module.exports = (config) => {
   return client;
 };
 
-createSocket = (logger) => {
+const createSocket = (logger) => {
   const socket = dgram.createSocket('udp4');
   if (socket) {
     socket.bind({exclusive:true});
