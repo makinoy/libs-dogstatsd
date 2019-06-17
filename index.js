@@ -43,6 +43,12 @@ module.exports = (config) => {
     client.update_stats(stat, value || 1, sampleRate, tags);
   };
 
+  client.distribution = (stat, value, sampleRate, tags) => {
+    var stats = {};
+    stats[stat] = value + "|d";
+    client.send(stats, sampleRate, tags);
+  }
+
   client.start = () => {
     var startTime = Date.now();
     return {

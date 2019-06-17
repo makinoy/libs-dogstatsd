@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | coveralls"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -20,11 +20,11 @@
   },
   "homepage": "https://github.com/makinoy/libs-dogstatsd#readme",
   "dependencies": {
-    "node-dogstatsd": "0.0.6"
+    "node-dogstatsd": "0.0.7"
   },
   "devDependencies": {
     "coveralls": "3.0.2",
-    "istanbul": "0.4.5",
-    "mocha": "5.2.0"
+    "mocha": "5.2.0",
+    "nyc": "14.1.1"
   }
 }
