@@ -57,7 +57,7 @@ module.exports = (config) => {
         return Date.now() - startTime
       },
 
-      tick: function(stat, num, _sampleRate, _tags) {
+      tick: function(stat, num, _sampleRate, _tags, distribution=false) {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
@@ -76,6 +76,9 @@ module.exports = (config) => {
 
         client.increment(stat + '.count', count, sampleRate, tags);
         client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
+        if (distribution) {
+          client.distribution(stat + '.dist', this.get_elapsed(), sampleRate, tags);
+        }
       },
     }
   };
