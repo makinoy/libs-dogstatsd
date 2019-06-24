@@ -14,9 +14,9 @@ module.exports = (config) => {
 
   const mock = config.mock;
   const logger = config.logger || console;
-  const host = config.HOST || 'localhost';
-  const port = config.PORT || 8125;
-  const cacheDns = config.cacheDns || true;
+  const host = config.HOST || process.env.DOGSTATSD_HOST_IP || 'localhost';
+  const port = config.PORT || process.env.DOGSTATSD_PORT || 8125;
+  const cacheDns = config.cacheDns || process.env.DOGSTATSD_CACHE_DNS || true;
 
   var socket = null;
   if (!mock) {
