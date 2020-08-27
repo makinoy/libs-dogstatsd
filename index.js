@@ -17,6 +17,7 @@ module.exports = (config) => {
   const host = config.HOST || process.env.DOGSTATSD_HOST_IP || 'localhost';
   const port = config.PORT || process.env.DOGSTATSD_PORT || 8125;
   const cacheDns = config.cacheDns || process.env.DOGSTATSD_CACHE_DNS || true;
+  const tickDefaultOptions = config.tickDefaultOptions || { distribution:false, increment:true, timing:true };
 
   var socket = null;
   if (!mock) {
@@ -57,12 +58,15 @@ module.exports = (config) => {
         return Date.now() - startTime
       },
 
-      tick: function(stat, num, _sampleRate, _tags, options) {
+      tick: function(stat, num, _sampleRate, _tags, distribution=false, options) {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
-        const defaultOptions = { distribution:false, increment:true, timing:true };
-        const opts = { ...defaultOptions, ...options };
+        
+        if (distribution){
+          tickDefaultOptions.distribution = true
+        }
+        const opts = { ...tickDefaultOptions, ...options };
 
         if (isNaN(count)) {
           logger.error('tick second arg must be number.');
