@@ -61,7 +61,7 @@ module.exports = (config) => {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
-        const defaultOptions = { distribution:false, increment:false, timing:true };
+        const defaultOptions = { distribution:false, increment:true, timing:true };
         const opts = { ...defaultOptions, ...options };
 
         if (isNaN(count)) {
