@@ -57,10 +57,13 @@ module.exports = (config) => {
         return Date.now() - startTime
       },
 
-      tick: function(stat, num, _sampleRate, _tags, distribution=false, increment=false) {
+      tick: function(stat, num, _sampleRate, _tags, options) {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
+        const defaultOptions = { distribution:false, increment:false, timing:true };
+        const opts = { ...defaultOptions, ...options };
+
         if (isNaN(count)) {
           logger.error('tick second arg must be number.');
           return;
@@ -74,12 +77,15 @@ module.exports = (config) => {
           return;
         }
 
-        if (increment) {
+        if (opts.increment) {
           client.increment(stat + '.count', count, sampleRate, tags);
         }
 
-        client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
-        if (distribution) {
+        if (opts.timing) {
+          client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
+        }
+
+        if (opts.distribution) {
           client.distribution(stat + '.dist', this.get_elapsed(), sampleRate, tags);
         }
       },
