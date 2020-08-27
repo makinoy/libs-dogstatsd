@@ -17,6 +17,7 @@ module.exports = (config) => {
   const host = config.HOST || process.env.DOGSTATSD_HOST_IP || 'localhost';
   const port = config.PORT || process.env.DOGSTATSD_PORT || 8125;
   const cacheDns = config.cacheDns || process.env.DOGSTATSD_CACHE_DNS || true;
+  const tickDefaultOptions = config.tickDefaultOptions || { distribution:false, increment:true, timing:true };
 
   var socket = null;
   if (!mock) {
@@ -57,10 +58,16 @@ module.exports = (config) => {
         return Date.now() - startTime
       },
 
-      tick: function(stat, num, _sampleRate, _tags, distribution=false) {
+      tick: function(stat, num, _sampleRate, _tags, distribution=false, options) {
         const count = num || 1;
         const sampleRate = _sampleRate || 1;
         const tags = _tags || null;
+        
+        if (distribution){
+          tickDefaultOptions.distribution = true
+        }
+        const opts = { ...tickDefaultOptions, ...options };
+
         if (isNaN(count)) {
           logger.error('tick second arg must be number.');
           return;
@@ -74,9 +81,15 @@ module.exports = (config) => {
           return;
         }
 
-        client.increment(stat + '.count', count, sampleRate, tags);
-        client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
-        if (distribution) {
+        if (opts.increment) {
+          client.increment(stat + '.count', count, sampleRate, tags);
+        }
+
+        if (opts.timing) {
+          client.timing(stat + '.time', this.get_elapsed(), sampleRate, tags);
+        }
+
+        if (opts.distribution) {
           client.distribution(stat + '.dist', this.get_elapsed(), sampleRate, tags);
         }
       },
